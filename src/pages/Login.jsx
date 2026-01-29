@@ -1,14 +1,27 @@
 import { useState } from "react";
 
-function Login({ onLogin, onRegister }) {
+function Login({ onLogin }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    email === "admin@gmail.com" && password === "123456" ? onLogin()
-    : setError("Invalid email or password");
+    const storedUser = JSON.parse(localStorage.getItem("userData"));
+
+    if (!storedUser){
+      setError("No registered user found. Please register first.");
+      return;
+    
+    }
+    if (email === storedUser.email &&
+        password === storedUser.password)
+     {
+      onLogin();
+      
+    }else {
+      setError("Invalid email or password.")
+    }
     };
 
     return (
@@ -31,7 +44,6 @@ function Login({ onLogin, onRegister }) {
           />
 
           <button type="submit">Login</button>
-          <button type="button"onclick={onRegister}>Register</button>
           </form>
             {error && <p style={{ color: "red" }}>{error}</p>}
             </div>
