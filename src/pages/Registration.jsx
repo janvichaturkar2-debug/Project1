@@ -5,8 +5,9 @@ function Registration({ onRegisterSuccessful }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!name || !email || !password) {
@@ -14,18 +15,41 @@ function Registration({ onRegisterSuccessful }) {
       return;
     }
 
-    const userData = { name, email, password };
-    localStorage.setItem("userData", JSON.stringify(userData));
+    try {
+      setLoading(true);
+      setMessage("");
 
-    setMessage("Registration successful ✅");
+      const res = await fetch("http://localhost:5000/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password }),
+      });
 
-    setName("");
-    setEmail("");
-    setPassword("");
+      const data = await res.json();
 
-    setTimeout(() => {
-      onRegisterSuccessful(); // ✅ spelling fixed
-    }, 2000);
+      // ❌ error case
+      if (!res.ok) {
+        setMessage(data.message || "Registration failed");
+        setLoading(false);
+        return;
+      }
+
+      // ✅ success
+      setMessage("Registration Successful!");
+      setName("");
+      setEmail("");
+      setPassword("");
+      setLoading(false);
+
+      setTimeout(() => {
+        onRegisterSuccessful();
+      }, 1500);
+
+    } catch (err) {
+      console.error(err);
+      setMessage("Server error");
+      setLoading(false);
+    }
   };
 
   return (
@@ -56,7 +80,9 @@ function Registration({ onRegisterSuccessful }) {
           onChange={(e) => setPassword(e.target.value)}
         />
 
-        <button type="submit">Register</button>
+        <button type="submit" disabled={loading}>
+          {loading ? "Registering..." : "Register"}
+        </button>
       </form>
     </div>
   );

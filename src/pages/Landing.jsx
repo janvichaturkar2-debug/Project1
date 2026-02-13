@@ -10,7 +10,7 @@ function landing({onNavigate}) {
             <button onClick={() =>onNavigate("about")}>About</button>
             <button onClick={() =>onNavigate("contact")}>Contact</button>
             <button onClick={() =>onNavigate("login")}>Login</button>
-            <button onClick={() =>onNavigate("registration")}>Register</button>
+            <button onClick={() =>onNavigate("register")}>Register</button>
             </nav>
              
              <p>This is the landing page of the website.</p>
